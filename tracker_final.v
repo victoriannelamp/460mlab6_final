@@ -1,11 +1,13 @@
-module tracker(step_clk, reset, one_Hz_clk, sys_clk, si, bcd3, bcd2, bcd1, bcd0); 
-input step_clk, reset, one_Hz_clk, sys_clk;
+module tracker(step_clk, reset, one_Hz_clk, half_Hz_clk, sys_clk, si, bcd3, bcd2, bcd1, bcd0); 
+input step_clk, reset, one_Hz_clk, sys_clk, half_Hz_clk;
 output si;
 output [4:0] bcd3, bcd2, bcd1, bcd0;
 
 reg [30:0] step_counter, steps_in_one_sec_counter, up_to_nine_sec_counter, cont_sec_of_high_activity, display_reg; 
 reg [31:0] shift_register;
 reg [3:0] steps_over_32_per_sec_counter;
+reg [1:0] state, next_state;
+reg [4:0] bcd3, bcd2, bcd1, bcd0;
 wire one_Hz_clk_SP, adder_sel, adder_in, clk_sel, first_nine_sec_pulse;
 wire cont_sec_sel, cont_sec_in, equals_60_sel, greater_than_60_sel;
 wire [4:0] step_counter_bcd3, step_counter_bcd2, step_counter_bcd1, step_counter_bcd0;
@@ -103,10 +105,50 @@ assign high_activity_bcd1 = (display_reg/10) % 10;
 assign high_activity_bcd2 = (display_reg/100) % 10;
 assign high_activity_bcd3 = (display_reg/1000) % 10;
 
-endmodule 
 
 
+/**************Display Changer************/
+always @(posedge half_Hz_clk or posedge reset)
+begin
+	if(reset) state <= 2'b00;
+	else state <= next_state;
+end
 
+always @(*)
+begin
+	case(state) begin
+		2'b00: begin
+			bcd3 = step_counter_bcd3;
+			bcd2 = step_counter_bcd2;
+			bcd1 = step_counter_bcd1;
+			bcd0 = step_counter_bcd0;
+			next_state = 2'b01;
+		end
+		2'b01: begin
+			bcd3 = distance_covered_bcd3;
+			bcd2 = distance_covered_bcd2;
+			bcd1 = distance_covered_bcd1;
+			bcd0 = distance_covered_bcd0;
+			next_state = 2'b10;
+		end
+		2'b10: begin
+			bcd3 = steps_over_32_bcd3;
+			bcd2 = steps_over_32_bcd2;
+			bcd1 = steps_over_32_bcd1;
+			bcd0 = steps_over_32_bcd0;
+			next_state = 2'b11;
+		end
+		2'b11: begin
+			bcd3 = high_activity_bcd3;
+			bcd2 = high_activity_bcd2;
+			bcd1 = high_activity_bcd1;
+			bcd0 = high_activity_bcd0;
+			next_state = 2'b00;
+		end
+	endcase
+end
+			
+endmodule
 
 
 
