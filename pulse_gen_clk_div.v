@@ -1,12 +1,12 @@
-module pulse_gen_clk_div(clk,rst,start,mode, pulse, clk_1hz); 
+module pulse_gen_clk_div(clk,rst,start,mode, pulse, clk_1hz, clk_halfhz); 
 input clk, rst, start; 
 input [1:0] mode; 
-output pulse, clk_1hz; 
+output pulse, clk_1hz, clk_halfhz; 
 
 reg [31:0] clk_var, hybrid;  
-reg [31:0] r_reg, r_reg_1hz;
-wire [31:0] r_nxt, r_nxt_1hz;
-reg clk_track, clk_track_1hz;
+reg [31:0] r_reg, r_reg_1hz, r_reg_halfhz;
+wire [31:0] r_nxt, r_nxt_1hz, r_nxt_halfhz;
+reg clk_track, clk_track_1hz, clk_track_halfhz;
 reg [31:0] hybrid_array [10:0]; 
 reg [31:0] hybrid_cnt; 
 reg [31:0] hybrid_loop; 
@@ -122,6 +122,30 @@ begin
  
   else 
       r_reg_1hz <= r_nxt_1hz;
+end 
+
+//half Hz clk div
+//INPUT clk system 100MHz 
+//OUTPUT clk halfhz signal always 
+ assign r_nxt_halfhz = r_reg_halfhz+1;   	      
+ assign clk_half =  clk_track_halfhz; 
+
+always @(posedge clk)
+begin 
+  if (rst)
+     begin
+        r_reg_halfhz <= 0;
+	clk_track_halfhz <= 1'b0;
+     end
+ 
+  else if (r_nxt_halfhz == 64'd100000000) //hlafhz
+ 	   begin
+	     r_reg_halfhz <= 0;
+	     clk_track_halfhz <= ~clk_track_halfhz;
+	   end
+ 
+  else 
+      r_reg_halfhz <= r_nxt_halfhz;
 end 
 
 
