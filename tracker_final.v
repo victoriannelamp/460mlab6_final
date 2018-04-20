@@ -116,7 +116,7 @@ end
 
 always @(*)
 begin
-	case(state) begin
+	case(state) 
 		2'b00: begin
 			bcd3 = step_counter_bcd3;
 			bcd2 = step_counter_bcd2;
