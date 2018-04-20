@@ -1,5 +1,5 @@
-module tracker(step_clk, reset, one_Hz_clk, sys_clk, si, bcd3, bcd2, bcd1, bcd0); 
-input step_clk, reset, one_Hz_clk, sys_clk;
+module tracker(step_clk, reset, one_Hz_clk, clk_halfhz, sys_clk, si, bcd3, bcd2, bcd1, bcd0); 
+input step_clk, reset, one_Hz_clk, sys_clk, clk_halfhz;
 output si;
 output [4:0] bcd3, bcd2, bcd1, bcd0;
 
