@@ -128,7 +128,7 @@ end
 //INPUT clk system 100MHz 
 //OUTPUT clk halfhz signal always 
  assign r_nxt_halfhz = r_reg_halfhz+1;   	      
- assign clk_half =  clk_track_halfhz; 
+ assign clk_halfhz =  clk_track_halfhz; 
 
 always @(posedge clk)
 begin 

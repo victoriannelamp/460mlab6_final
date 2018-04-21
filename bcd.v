@@ -76,7 +76,7 @@ always @ (*)
    5'h0D : sseg_temp = 7'b0100001; //to display d
    5'h0E : sseg_temp = 7'b0000110; //to display E
    5'h0F : sseg_temp = 7'b0001110; //to display F
-   5'h1F : sseg_temp = 7'b1111111; //none
+   5'h1F : sseg_temp = 7'b1110111; //to display _
    default : sseg_temp = 7'b1111111; //none
   endcase
  end
