@@ -1,8 +1,9 @@
-module top(clk, rst,start,mode, si, a,b,c,d,e,f,g,an); 
+module top(clk, rst,start,mode, si, clk_1hz, a,b,c,d,e,f,g,an); 
 input clk,rst,start; 
 input [1:0] mode; 
 output si, a, b, c, d, e, f, g; //segments 
 output [3:0] an; 
+output clk_1hz; 
 wire clk_1hz, clk_halfhz, pulse; 
 wire [4:0] bcd0, bcd1, bcd2, bcd3;  //the 4 inputs for each display
 wire dp; 

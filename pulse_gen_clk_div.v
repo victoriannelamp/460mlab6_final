@@ -111,7 +111,7 @@ begin
   if (rst)
      begin
         r_reg_1hz <= 0;
-	clk_track_1hz <= 1'b0;
+	clk_track_1hz <= 1'b1;
      end
  
   else if (r_nxt_1hz == 64'd50000000) //1hz
@@ -135,7 +135,7 @@ begin
   if (rst)
      begin
         r_reg_halfhz <= 0;
-	clk_track_halfhz <= 1'b0;
+	clk_track_halfhz <= 1'b1;
      end
  
   else if (r_nxt_halfhz == 64'd100000000) //hlafhz

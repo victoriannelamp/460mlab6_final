@@ -49,7 +49,7 @@ assign distance_covered_bcd0 = (shift_register[0] == 1'b1) ? 5'd5 : 5'd0;
 
 /**********Part 3: Steps Over 32/sec ***********/
 
-single_pulse single_pulser(sys_clk, one_Hz_clk, one_Hz_clk_SP);
+
 /* attempt 1
 always @(posedge step_clk or posedge reset or posedge one_Hz_clk_SP)  //steps in one sec counter
 begin
@@ -125,8 +125,8 @@ assign steps_over_32_bcd3 = (num_steps_over_32_per_sec/1000) % 10;
 wire step_clk_SP;
 reg [30:0] num_steps_over_32_per_sec;
 single_pulse step_single_pulser(sys_clk, step_clk, step_clk_SP); //synchronizes the step pulses with the system clk
-
-always @(posedge sys_clk or posedge reset)
+single_pulse single_pulser(sys_clk, one_Hz_clk, one_Hz_clk_SP); // sys clk length pulse generated for 1 hz clk posedge 
+always @(posedge sys_clk)
 begin
 	if(reset) begin
 		second_counter <= 31'b0;
