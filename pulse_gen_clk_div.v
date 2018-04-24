@@ -80,7 +80,7 @@ begin
 if(hybrid_cnt < 9) begin hybrid <= hybrid_loop; end
 else if(hybrid_cnt < 73) begin hybrid <= pulse70; end //70hz
 else if(hybrid_cnt < 79) begin hybrid <= pulse34;  end //34hz 
-else if(hybrid_cnt < 143) begin hybrid <= pulse124;  end //124hz 
+else if(hybrid_cnt < 144) begin hybrid <= pulse124;  end //124hz 
 else hybrid <= 0; //TODO if hyrbid == 0 don't output anything 
 
 case(hybrid_cnt) 
