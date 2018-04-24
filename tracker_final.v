@@ -250,10 +250,10 @@ end
 always @(*)
 begin
 
-			bcd3 = high_activity_bcd3;
-			bcd2 = high_activity_bcd2;
-			bcd1 = high_activity_bcd1;
-			bcd0 = high_activity_bcd0;
+			bcd3 = step_counter_bcd3;
+			bcd2 = step_counter_bcd2;
+			bcd1 = step_counter_bcd1;
+			bcd0 = step_counter_bcd0;
 /*	case(state) 
 		2'b00: begin
 			bcd3 = step_counter_bcd3;
