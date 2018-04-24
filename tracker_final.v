@@ -1,7 +1,8 @@
-module tracker(step_clk, reset, one_Hz_clk, half_Hz_clk, sys_clk, si, bcd3, bcd2, bcd1, bcd0); 
+module tracker(step_clk, reset, one_Hz_clk, half_Hz_clk, sys_clk, si, bcd3, bcd2, bcd1, bcd0, steps_per_sec); 
 input step_clk, reset, one_Hz_clk, sys_clk, half_Hz_clk;
 output si;
 output [4:0] bcd3, bcd2, bcd1, bcd0;
+output reg [7:0] steps_per_sec;
 
 reg [30:0] step_counter, steps_in_one_sec_counter, second_counter, cont_sec_of_high_activity, display_reg; 
 reg [31:0] shift_register;
@@ -163,6 +164,8 @@ assign steps_over_32_bcd3 = (num_steps_over_32_per_sec/1000) % 10;
 
 
 /*****************Part 4: High Activity Time Greater than Threshold************/
+/*
+//attempt 1
 always @(posedge one_Hz_clk_SP or posedge reset) 
 begin
 	if(reset == 1'b1) cont_sec_of_high_activity <= 31'b0;
@@ -187,6 +190,54 @@ assign high_activity_bcd1 = (display_reg/10) % 10;
 assign high_activity_bcd2 = (display_reg/100) % 10;
 assign high_activity_bcd3 = (display_reg/1000) % 10;
 
+*/
+
+//attempt 2
+reg [30:0] num_steps_ge_64_per_sec, steps_in_one_sec_counter_part4, high_activity_display_reg;
+always @(posedge sys_clk)
+begin
+	if(reset) begin
+		steps_in_one_sec_counter_part4 <= 31'b0;
+		num_steps_ge_64_per_sec <= 31'b0;
+		high_activity_display_reg <= 31'b0;
+		steps_per_sec <= 8'b0;
+	end
+	
+	else if(one_Hz_clk_SP) begin //every second, do the following
+		steps_per_sec <= steps_in_one_sec_counter_part4;
+		if((steps_in_one_sec_counter_part4 >= 64) && (num_steps_ge_64_per_sec < 59)) begin //high activity in progress, less than a min
+			num_steps_ge_64_per_sec <= num_steps_ge_64_per_sec + 1;
+			steps_in_one_sec_counter_part4 <= 31'b0;
+			high_activity_display_reg <= high_activity_display_reg;
+		end 
+		else if((steps_in_one_sec_counter_part4 >= 64) && (num_steps_ge_64_per_sec == 59)) begin //high activity in progress, exactly one min
+			num_steps_ge_64_per_sec <= num_steps_ge_64_per_sec + 1;
+			steps_in_one_sec_counter_part4 <= 31'b0;
+			high_activity_display_reg <= high_activity_display_reg + 31'd60;
+		end
+		else if((steps_in_one_sec_counter_part4 >=64) && (num_steps_ge_64_per_sec > 59)) begin //high activity in progress for more than a min
+			num_steps_ge_64_per_sec <= num_steps_ge_64_per_sec + 1;
+			steps_in_one_sec_counter_part4 <= 31'b0;
+			high_activity_display_reg <= high_activity_display_reg + 1;
+		end 
+		else if((steps_in_one_sec_counter_part4 < 64)) begin //a sec of not high activity has occurred
+			num_steps_ge_64_per_sec <= 31'b0;
+			steps_in_one_sec_counter_part4 <= 31'b0;
+			high_activity_display_reg <= high_activity_display_reg;
+		end
+		else steps_in_one_sec_counter_part4 <= 31'b0; //default case, I don't think this will ever happen
+	end
+	
+	else if(step_clk_SP) begin
+		steps_in_one_sec_counter_part4 <= steps_in_one_sec_counter_part4 + 1;
+	end
+
+end
+
+assign high_activity_bcd0 =  high_activity_display_reg % 10;
+assign high_activity_bcd1 = (high_activity_display_reg/10) % 10;
+assign high_activity_bcd2 = (high_activity_display_reg/100) % 10;
+assign high_activity_bcd3 = (high_activity_display_reg/1000) % 10;
 
 
 /**************Display Changer************/
@@ -199,10 +250,10 @@ end
 always @(*)
 begin
 
-			bcd3 = steps_over_32_bcd3;
-			bcd2 = steps_over_32_bcd2;
-			bcd1 = steps_over_32_bcd1;
-			bcd0 = steps_over_32_bcd0;
+			bcd3 = high_activity_bcd3;
+			bcd2 = high_activity_bcd2;
+			bcd1 = high_activity_bcd1;
+			bcd0 = high_activity_bcd0;
 /*	case(state) 
 		2'b00: begin
 			bcd3 = step_counter_bcd3;
