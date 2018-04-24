@@ -25,6 +25,7 @@ var_clk_div #(64'd757575) var_clk_div_66(rst, clk, pulse66); //66hz
 var_clk_div #(64'd1923076) var_clk_div_26(rst, clk, pulse26); //26hz
 var_clk_div #(64'd714285) var_clk_div_70(rst, clk, pulse70); //70hz
 var_clk_div #(64'd1666666) var_clk_div_30(rst, clk,  pulse30); //30hz
+var_clk_div #(64'd403225) var_clk_div_124(rst, clk,  pulse124); //124hz
 
 initial 
 begin 
@@ -77,9 +78,9 @@ if(mode == 2'b11)
 begin 
 
 if(hybrid_cnt < 9) begin hybrid <= hybrid_loop; end
-else if(hybrid_cnt < 74) begin hybrid <= pulse70; end //70hz
-else if(hybrid_cnt < 80) begin hybrid <= pulse34;  end //34hz 
-else if(hybrid_cnt < 144) begin hybrid <= pulse128;  end //124hz 
+else if(hybrid_cnt < 73) begin hybrid <= pulse70; end //70hz
+else if(hybrid_cnt < 79) begin hybrid <= pulse34;  end //34hz 
+else if(hybrid_cnt < 143) begin hybrid <= pulse124;  end //124hz 
 else hybrid <= 0; //TODO if hyrbid == 0 don't output anything 
 
 case(hybrid_cnt) 
