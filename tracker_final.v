@@ -250,11 +250,8 @@ end
 always @(*)
 begin
 
-			bcd3 = step_counter_bcd3;
-			bcd2 = step_counter_bcd2;
-			bcd1 = step_counter_bcd1;
-			bcd0 = step_counter_bcd0;
-/*	case(state) 
+			
+	case(state) 
 		2'b00: begin
 			bcd3 = step_counter_bcd3;
 			bcd2 = step_counter_bcd2;
@@ -283,7 +280,7 @@ begin
 			bcd0 = high_activity_bcd0;
 			next_state = 2'b00;
 		end
-	endcase */
+	endcase 
 end
 			
 endmodule
